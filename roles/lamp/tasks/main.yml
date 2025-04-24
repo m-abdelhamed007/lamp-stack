@@ -1,0 +1,31 @@
+# tasks file for lamp
+---
+- name: Deploy LAMP stack
+  block:
+    - name: Include Apache tasks
+      ansible.builtin.include_tasks: apache.yml
+
+    - name: Include MySQL tasks
+      ansible.builtin.include_tasks: mysql.yml
+
+    - name: Include PHP tasks
+      ansible.builtin.include_tasks: php.yml
+
+    - name: Include firewall tasks
+      ansible.builtin.include_tasks: firewall.yml
+
+  rescue:
+    - name: Log error if LAMP deployment fails
+      ansible.builtin.debug:
+        msg: "LAMP stack deployment failed "
+
+  always:
+    - name: Ensure Apache is running
+      ansible.builtin.service:
+        name: "{{ 'apache2' if ansible_distribution == 'Ubuntu' else 'httpd' }}"
+        state: started
+
+    - name: Ensure MySQL is running
+      ansible.builtin.service:
+        name: "{{ 'mysql' if ansible_distribution == 'Ubuntu' else 'mariadb' }}"
+        state: started

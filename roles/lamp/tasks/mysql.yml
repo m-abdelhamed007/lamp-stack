@@ -1,0 +1,38 @@
+---
+- name: Install MySQL on Ubuntu
+  ansible.builtin.apt:
+    name: mysql-server
+    state: present
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install MySQL on Fedora
+  ansible.builtin.dnf:
+    name: mariadb-server
+    state: present
+  when: ansible_distribution == 'Fedora'
+
+- name: Start and enable MySQL service
+  ansible.builtin.service:
+    name: "{{ 'mysql' if ansible_distribution == 'Ubuntu' else 'mariadb' }}"
+    state: started
+    enabled: yes
+
+- name: Set MySQL root password
+  ansible.builtin.mysql_user:
+    name: root
+    password: "{{ mysql_root_password | default('pass123') }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+  no_log: true
+
+- name: Remove anonymous MySQL users
+  ansible.builtin.mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+
+- name: Remove MySQL test database
+  ansible.builtin.mysql_db:
+    name: test
+    state: absent

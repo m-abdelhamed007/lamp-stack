@@ -1,0 +1,13 @@
+---
+- name: Install PHP on Ubuntu
+  ansible.builtin.apt:
+    name: php
+    state: present
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install PHP on Fedora
+  ansible.builtin.dnf:
+    name: php
+    state: present
+  when: ansible_distribution == 'Fedora'

@@ -1,0 +1,11 @@
+# handlers file for lamp
+---
+- name: Restart Apache
+  ansible.builtin.service:
+    name: "{{ 'apache2' if ansible_distribution == 'Ubuntu' else 'httpd' }}"
+    state: restarted
+
+- name: Restart MySQL
+  ansible.builtin.service:
+    name: "{{ 'mysql' if ansible_distribution == 'Ubuntu' else 'mariadb' }}"
+    state: restarted

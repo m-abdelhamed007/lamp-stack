@@ -1,0 +1,26 @@
+---
+- name: Install Apache on Ubuntu
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install Apache on Fedora
+  ansible.builtin.dnf:
+    name: httpd
+    state: present
+  when: ansible_distribution == 'Fedora'
+
+- name: Start and enable Apache service
+  ansible.builtin.service:
+    name: "{{ 'apache2' if ansible_distribution == 'Ubuntu' else 'httpd' }}"
+    state: started
+    enabled: yes
+
+- name: Copy sample PHP index file
+  ansible.builtin.copy:
+    src: index.html
+    dest: "{{ '/var/www/html/index.html' if ansible_distribution == 'Ubuntu' else '/var/www/html/index.html' }}"
+    mode: '0644'
+  notify: Restart Apache

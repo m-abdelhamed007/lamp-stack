@@ -1,0 +1,6 @@
+---
+   - name: Deploy LAMP stack on Ubuntu or Fedora
+     hosts: dev_servers
+     become: yes
+     roles:
+       - lamp
